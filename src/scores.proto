@@ -1,0 +1,78 @@
+syntax="proto3";
+
+package scores;
+
+service ScoresService {
+    rpc GetAllScores(Empty) returns (GetAllScoresResponse) {}
+    rpc GetScoreById(GetScoreByIdRequest) returns (GetScoreByIdResponse) {}
+    rpc GetLeaderboard(GetLeaderboardRequest) returns (GetLeaderboardResponse) {}
+    rpc CreateScore(CreateScoreRequest) returns (CreateScoreResponse) {}
+    rpc UpdateScore(UpdateScoreRequest) returns (UpdateScoreResponse) {}
+    rpc RemoveScoreById(RemoveScoreByIdRequest) returns (RemoveScoreByIdResponse) {}
+}
+
+
+message Score {
+    string id = 1;
+    string userId = 2;
+    string game = 3;
+    int32 score = 4;
+    string createdAt = 5;
+    string updatedAt = 6;
+}
+
+
+message GetAllScoresRequest {
+    int32 limit = 1;
+    int32 page = 2;
+}
+
+message GetLeaderboardRequest {
+    int32 limit = 1;
+    int32 page = 2;
+}
+
+message GetAllScoresResponse {
+    repeated Score scores = 1;
+}
+
+message GetLeaderboardResponse {
+    repeated Score scores = 1;
+}
+
+message GetScoreByIdRequest {
+    string id = 1;
+}
+
+message GetScoreByIdResponse {
+    Score score = 1;
+}
+
+message CreateScoreRequest {
+    string userId = 1;
+    string game = 2;
+    int32 score = 3;
+}
+
+message CreateScoreResponse {
+    Score score = 1;
+}
+
+message UpdateScoreRequest {
+    string userId = 2;
+    string game = 3;
+    int32 score = 4;
+}
+
+
+message UpdateScoreResponse {
+    Score score = 1;
+}
+
+message RemoveScoreByIdRequest {
+    string id = 1;
+}
+
+message RemoveScoreByIdResponse {}
+
+message Empty {}
