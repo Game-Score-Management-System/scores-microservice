@@ -1,26 +1,23 @@
 import { Controller } from '@nestjs/common';
 import { ScoresService } from './scores.service';
 import { GrpcMethod } from '@nestjs/microservices';
+import {
+  CreateScoreRequest,
+  CreateScoreResponse,
+  GetAllScoresRequest,
+  GetAllScoresResponse
+} from '../common/interfaces/score.interface';
 
 @Controller()
 export class ScoresController {
   constructor(private readonly scoresService: ScoresService) {}
 
   @GrpcMethod('ScoresService', 'GetAllScores')
-  getAllScores() {
-    return {
-      scores: [
-        {
-          id: 1,
-          score: 100,
-        },
-        {
-          id: 2,
-          score: 200,
-        },
-      ],
-    };
+  async getAllScores(requestData: GetAllScoresRequest): Promise<GetAllScoresResponse> {
+    const { scores, metadata } = await this.scoresService.getAllScores(requestData);
+    return { scores, metadata };
   }
+
   @GrpcMethod('ScoresService', 'GetScoreById')
   getScoreById() {}
 
@@ -28,7 +25,13 @@ export class ScoresController {
   getLeaderboard() {}
 
   @GrpcMethod('ScoresService', 'CreateScore')
-  createScore() {}
+  async createScore(requestData: CreateScoreRequest): Promise<CreateScoreResponse> {
+    const score = await this.scoresService.createScore(requestData);
+
+    return {
+      score
+    };
+  }
 
   @GrpcMethod('ScoresService', 'UpdateScore')
   updateScore() {}

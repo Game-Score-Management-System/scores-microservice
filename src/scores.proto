@@ -3,7 +3,7 @@ syntax="proto3";
 package scores;
 
 service ScoresService {
-    rpc GetAllScores(Empty) returns (GetAllScoresResponse) {}
+    rpc GetAllScores(GetAllScoresRequest) returns (GetAllScoresResponse) {}
     rpc GetScoreById(GetScoreByIdRequest) returns (GetScoreByIdResponse) {}
     rpc GetLeaderboard(GetLeaderboardRequest) returns (GetLeaderboardResponse) {}
     rpc CreateScore(CreateScoreRequest) returns (CreateScoreResponse) {}
@@ -19,21 +19,28 @@ message Score {
     int32 score = 4;
     string createdAt = 5;
     string updatedAt = 6;
+    string deletedAt = 7;
 }
 
+message Metadata {
+    int32 page = 1;
+    int32 limit = 2;
+    int32 totalItems = 3;
+    int32 totalPages = 4;
+}
 
 message GetAllScoresRequest {
     int32 limit = 1;
     int32 page = 2;
 }
+message GetAllScoresResponse {
+    repeated Score scores = 1;
+    Metadata metadata = 2;
+}
 
 message GetLeaderboardRequest {
     int32 limit = 1;
     int32 page = 2;
-}
-
-message GetAllScoresResponse {
-    repeated Score scores = 1;
 }
 
 message GetLeaderboardResponse {
@@ -76,3 +83,4 @@ message RemoveScoreByIdRequest {
 message RemoveScoreByIdResponse {}
 
 message Empty {}
+
