@@ -8,7 +8,7 @@ service ScoresService {
     rpc GetLeaderboard(GetLeaderboardRequest) returns (GetLeaderboardResponse) {}
     rpc CreateScore(CreateScoreRequest) returns (CreateScoreResponse) {}
     rpc UpdateScore(UpdateScoreRequest) returns (UpdateScoreResponse) {}
-    rpc RemoveScoreById(RemoveScoreByIdRequest) returns (RemoveScoreByIdResponse) {}
+    rpc RemoveScore(RemoveScoreRequest) returns (RemoveScoreResponse) {}
 }
 
 
@@ -32,6 +32,9 @@ message Metadata {
 message GetAllScoresRequest {
     int32 limit = 1;
     int32 page = 2;
+    string game = 3;
+    string userId = 4;
+    int32 showDeleted = 6;
 }
 message GetAllScoresResponse {
     repeated Score scores = 1;
@@ -41,6 +44,7 @@ message GetAllScoresResponse {
 message GetLeaderboardRequest {
     int32 limit = 1;
     int32 page = 2;
+    string game = 3;
 }
 
 message GetLeaderboardResponse {
@@ -76,11 +80,11 @@ message UpdateScoreResponse {
     Score score = 1;
 }
 
-message RemoveScoreByIdRequest {
+message RemoveScoreRequest {
     string id = 1;
 }
 
-message RemoveScoreByIdResponse {}
+message RemoveScoreResponse {}
 
 message Empty {}
 

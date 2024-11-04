@@ -8,7 +8,7 @@
 //   }
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { randomUUID } from 'node:crypto';
+import { v4 as uuidv4 } from 'uuid';
 import { Document } from 'mongoose';
 
 @Schema()
@@ -17,40 +17,40 @@ export class Score extends Document {
     type: String,
     required: true,
     unique: true,
-    default: randomUUID(),
+    default: uuidv4
   })
   id: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   userId: string;
 
   @Prop({
     type: String,
-    required: true,
+    required: true
   })
   game: string;
 
   @Prop({
     type: Number,
-    required: true,
+    required: true
   })
   score: number;
 
   @Prop({
     required: true,
     type: Date,
-    default: Date.now,
+    default: Date.now
   })
   createdAt: string;
 
   @Prop({
     type: Date,
-    default: Date.now,
+    default: Date.now
   })
   updatedAt: string;
 
   @Prop({
-    type: Date,
+    type: Date
   })
   deletedAt: string;
 }

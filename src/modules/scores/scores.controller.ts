@@ -5,7 +5,15 @@ import {
   CreateScoreRequest,
   CreateScoreResponse,
   GetAllScoresRequest,
-  GetAllScoresResponse
+  GetAllScoresResponse,
+  GetLeaderboardRequest,
+  GetLeaderboardResponse,
+  GetScoreByIdRequest,
+  GetScoreByIdResponse,
+  RemoveScoreByIdRequest,
+  RemoveScoreByIdResponse,
+  UpdateScoreRequest,
+  UpdateScoreResponse
 } from '../common/interfaces/score.interface';
 
 @Controller()
@@ -19,10 +27,20 @@ export class ScoresController {
   }
 
   @GrpcMethod('ScoresService', 'GetScoreById')
-  getScoreById() {}
+  async getScoreById(requestData: GetScoreByIdRequest): Promise<GetScoreByIdResponse> {
+    const score = await this.scoresService.getScoreById(requestData);
+    return { score };
+  }
 
   @GrpcMethod('ScoresService', 'GetLeaderboard')
-  getLeaderboard() {}
+  async getLeaderboard(requestData: GetLeaderboardRequest): Promise<GetLeaderboardResponse> {
+    const { scores, metadata } = await this.scoresService.getLeaderboard(requestData);
+
+    return {
+      scores,
+      metadata
+    };
+  }
 
   @GrpcMethod('ScoresService', 'CreateScore')
   async createScore(requestData: CreateScoreRequest): Promise<CreateScoreResponse> {
@@ -34,8 +52,14 @@ export class ScoresController {
   }
 
   @GrpcMethod('ScoresService', 'UpdateScore')
-  updateScore() {}
+  async updateScore(requestData: UpdateScoreRequest): Promise<UpdateScoreResponse> {
+    const score = await this.scoresService.updateScore(requestData);
+    return { score };
+  }
 
-  @GrpcMethod('ScoresService', 'RemoveScoreById')
-  removeScoreById() {}
+  @GrpcMethod('ScoresService', 'RemoveScore')
+  async removeScore(requestData: RemoveScoreByIdRequest): Promise<RemoveScoreByIdResponse> {
+    await this.scoresService.removeScore(requestData);
+    return {};
+  }
 }

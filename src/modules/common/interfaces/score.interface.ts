@@ -1,4 +1,5 @@
 import { Metadata } from './metadaba.interface';
+import { User } from './user.interface';
 
 export interface Score {
   id: string;
@@ -13,6 +14,9 @@ export interface Score {
 export interface GetAllScoresRequest {
   limit: number;
   page: number;
+  game?: string;
+  userId?: string;
+  showDeleted?: string;
 }
 
 export interface GetAllScoresResponse {
@@ -23,10 +27,12 @@ export interface GetAllScoresResponse {
 export interface GetLeaderboardRequest {
   limit: number;
   page: number;
+  game: string;
 }
 
 export interface GetLeaderboardResponse {
   scores: Score[];
+  metadata?: Metadata;
 }
 
 export interface GetScoreByIdRequest {
