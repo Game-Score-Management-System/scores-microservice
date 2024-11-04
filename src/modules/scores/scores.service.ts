@@ -19,30 +19,24 @@ export class ScoresService {
   constructor(@InjectModel(Score.name) private scoreModel: Model<Score>) {}
 
   async getAllScores(data: GetAllScoresRequest) {
-    const { page, limit, game, userId, showDeleted } = data;
+    const { page, limit, filter } = data;
+    const { orderBy = 'score', order = 'desc', ...filters } = filter;
 
-    const filters = {};
-
-    if (game) {
-      filters['game'] = game;
-    }
-
-    if (userId) {
-      filters['userId'] = userId;
-    }
-
-    if (!showDeleted) {
-      filters['deletedAt'] = null;
+    if (filters.showDeleted) {
+      delete filters.showDeleted;
+    } else {
+      filters.deletedAt = null;
     }
 
     const scores = await this.scoreModel
       .find(filters)
-      .sort({ score: -1 })
+      .sort({ [orderBy]: order === 'asc' ? 1 : -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .exec();
 
     const total = await this.scoreModel.countDocuments().exec();
+
     const totalPages = Math.ceil(total / limit);
 
     return {
@@ -102,8 +96,8 @@ export class ScoresService {
   }
 
   async updateScore(data: UpdateScoreRequest) {
-    const { score, userId, game } = data;
-    const result = await this.scoreModel.findOneAndUpdate({ userId, game }, { score }).exec();
+    const { scoreId, score, game } = data;
+    const result = await this.scoreModel.findOneAndUpdate({ id: scoreId }, { score, game }).exec();
     if (!result) {
       throw new RpcException({ code: status.NOT_FOUND, message: 'Score not found' });
     }

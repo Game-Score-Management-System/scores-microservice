@@ -22,6 +22,14 @@ message Score {
     string deletedAt = 7;
 }
 
+message FilterScores {
+    string game = 1;
+    string userId = 2;
+    bool showDeleted = 3;
+    string orderBy = 4;
+    string order = 5;
+}
+
 message Metadata {
     int32 page = 1;
     int32 limit = 2;
@@ -32,9 +40,8 @@ message Metadata {
 message GetAllScoresRequest {
     int32 limit = 1;
     int32 page = 2;
-    string game = 3;
-    string userId = 4;
-    int32 showDeleted = 6;
+    FilterScores filter = 3;
+
 }
 message GetAllScoresResponse {
     repeated Score scores = 1;
@@ -70,7 +77,7 @@ message CreateScoreResponse {
 }
 
 message UpdateScoreRequest {
-    string userId = 2;
+    string scoreId = 2;
     string game = 3;
     int32 score = 4;
 }

@@ -14,9 +14,14 @@ export interface Score {
 export interface GetAllScoresRequest {
   limit: number;
   page: number;
-  game?: string;
-  userId?: string;
-  showDeleted?: string;
+  filter?: {
+    game?: string;
+    userId?: string;
+    showDeleted?: boolean;
+    orderBy?: string;
+    order?: 'asc' | 'desc';
+    deletedAt?: string;
+  };
 }
 
 export interface GetAllScoresResponse {
@@ -54,7 +59,7 @@ export interface CreateScoreResponse {
 }
 
 export interface UpdateScoreRequest {
-  userId: string;
+  scoreId: string;
   game: string;
   score: number;
 }
