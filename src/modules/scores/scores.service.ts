@@ -53,21 +53,38 @@ export class ScoresService {
   async getLeaderboard(data: GetLeaderboardRequest) {
     const { page, limit, game } = data;
     const scores = await this.scoreModel
-      .find({ deletedAt: null, game })
-      .sort({ score: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
+      .aggregate([
+        { $match: { game } }, // Filtra los documentos para que coincidan con el juego especificado.
+        { $sort: { score: -1 } }, // Ordena los documentos por la puntuación en orden descendente.
+        {
+          $group: {
+            // Agrupa los documentos por `userId`, tomando la primera puntuación y el primer documento completo.
+            _id: '$userId', // _id es el campo por el cual se agrupan los documentos.
+            score: { $first: '$score' }, // $first toma el primer valor no nulo en el grupo.
+            doc: { $first: '$$ROOT' } // $$ROOT es una variable que contiene el documento actual.
+          }
+        },
+        {
+          $replaceRoot: { newRoot: '$doc' } // Reemplaza el documento raíz con el documento completo agrupado.
+        },
+        { $sort: { score: -1 } }, // Vuelve a ordenar los documentos por la puntuación en orden descendente.
+        { $skip: (page - 1) * limit }, // Salta los documentos según la página y el límite especificados.
+        { $limit: limit } // Limita el número de documentos devueltos al límite especificado.
+      ])
       .exec();
 
-    const total = await this.scoreModel.countDocuments().exec();
-    const totalPages = Math.ceil(total / limit);
+    const total = await this.scoreModel
+      .aggregate([{ $match: { game } }, { $group: { _id: '$userId' } }])
+      .exec();
+
+    const totalPages = Math.ceil(total.length / limit);
 
     return {
       scores,
       metadata: {
         page,
         limit,
-        totalItems: total,
+        totalItems: total.length,
         totalPages: totalPages
       }
     };
