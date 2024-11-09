@@ -11,7 +11,7 @@ async function bootstrap() {
       options: {
         package: 'scores',
         protoPath: join(__dirname, 'scores.proto'),
-        url: process.env.SCORES_SERVICE_URL ?? 'localhost:50052',
+        url: process.env.SCORES_SERVICE_GRPC ?? 'localhost:50052',
       },
     },
   );
