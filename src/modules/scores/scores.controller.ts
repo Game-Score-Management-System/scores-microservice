@@ -1,38 +1,65 @@
 import { Controller } from '@nestjs/common';
 import { ScoresService } from './scores.service';
 import { GrpcMethod } from '@nestjs/microservices';
+import {
+  CreateScoreRequest,
+  CreateScoreResponse,
+  GetAllScoresRequest,
+  GetAllScoresResponse,
+  GetLeaderboardRequest,
+  GetLeaderboardResponse,
+  GetScoreByIdRequest,
+  GetScoreByIdResponse,
+  RemoveScoreByIdRequest,
+  RemoveScoreByIdResponse,
+  UpdateScoreRequest,
+  UpdateScoreResponse
+} from '../common/interfaces/score.interface';
 
 @Controller()
 export class ScoresController {
   constructor(private readonly scoresService: ScoresService) {}
 
   @GrpcMethod('ScoresService', 'GetAllScores')
-  getAllScores() {
-    return {
-      scores: [
-        {
-          id: 1,
-          score: 100,
-        },
-        {
-          id: 2,
-          score: 200,
-        },
-      ],
-    };
+  async getAllScores(requestData: GetAllScoresRequest): Promise<GetAllScoresResponse> {
+    const { scores, metadata } = await this.scoresService.getAllScores(requestData);
+    return { scores, metadata };
   }
+
   @GrpcMethod('ScoresService', 'GetScoreById')
-  getScoreById() {}
+  async getScoreById(requestData: GetScoreByIdRequest): Promise<GetScoreByIdResponse> {
+    const score = await this.scoresService.getScoreById(requestData);
+    return { score };
+  }
 
   @GrpcMethod('ScoresService', 'GetLeaderboard')
-  getLeaderboard() {}
+  async getLeaderboard(requestData: GetLeaderboardRequest): Promise<GetLeaderboardResponse> {
+    const { scores, metadata } = await this.scoresService.getLeaderboard(requestData);
+
+    return {
+      scores,
+      metadata
+    };
+  }
 
   @GrpcMethod('ScoresService', 'CreateScore')
-  createScore() {}
+  async createScore(requestData: CreateScoreRequest): Promise<CreateScoreResponse> {
+    const score = await this.scoresService.createScore(requestData);
+
+    return {
+      score
+    };
+  }
 
   @GrpcMethod('ScoresService', 'UpdateScore')
-  updateScore() {}
+  async updateScore(requestData: UpdateScoreRequest): Promise<UpdateScoreResponse> {
+    const score = await this.scoresService.updateScore(requestData);
+    return { score };
+  }
 
-  @GrpcMethod('ScoresService', 'RemoveScoreById')
-  removeScoreById() {}
+  @GrpcMethod('ScoresService', 'RemoveScore')
+  async removeScore(requestData: RemoveScoreByIdRequest): Promise<RemoveScoreByIdResponse> {
+    await this.scoresService.removeScore(requestData);
+    return {};
+  }
 }
