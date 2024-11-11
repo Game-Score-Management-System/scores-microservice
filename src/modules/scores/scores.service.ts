@@ -54,7 +54,7 @@ export class ScoresService {
     const { page, limit, game } = data;
     const scores = await this.scoreModel
       .aggregate([
-        { $match: { game } }, // Filtra los documentos para que coincidan con el juego especificado.
+        { $match: { game, deletedAt: null } }, // Filtra los documentos para que coincidan con el juego especificado y no estén eliminados.
         { $sort: { score: -1 } }, // Ordena los documentos por la puntuación en orden descendente.
         {
           $group: {
@@ -74,7 +74,7 @@ export class ScoresService {
       .exec();
 
     const total = await this.scoreModel
-      .aggregate([{ $match: { game } }, { $group: { _id: '$userId' } }])
+      .aggregate([{ $match: { game, deletedAt: null } }, { $group: { _id: '$userId' } }])
       .exec();
 
     const totalPages = Math.ceil(total.length / limit);
